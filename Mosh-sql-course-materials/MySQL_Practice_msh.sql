@@ -8,7 +8,7 @@
 -- FROM products;
 
 ----------------------------------------------------------------------------
--- USE store;
+USE store;
 
 -- SELECT *
 -- FROM customers
@@ -294,16 +294,142 @@ EXERCISE: Get the customers whose
 
 /*EXERCISE : using order_items table, items are sorted based on total price. write a query that sorts using order_id 2 and total price in descending order*/
 
-SELECT *, 
-	(unit_price*quantity) AS total_price
-FROM order_items
-WHERE order_id = 2
-ORDER BY order_id DESC, total_price DESC;  
+-- SELECT *, 
+-- 	(unit_price*quantity) AS total_price
+-- FROM order_items
+-- WHERE order_id = 2
+-- ORDER BY order_id DESC, total_price DESC;  
 
-/*Mosh's Solution*/
-SELECT *, 
-	(unit_price*quantity) AS total_price
-FROM order_items
-WHERE order_id = 2
-ORDER BY order_id DESC, total_price DESC; 
+-- /*Mosh's Solution*/
+-- SELECT *, 
+-- 	(unit_price*quantity) AS total_price
+-- FROM order_items
+-- WHERE order_id = 2
+-- ORDER BY total_price DESC; 
+
+----------------------------------- The LIMIT clause (ts: 1:21)-------------------------
+/*How to limit the number of results to your query*/
+-- SELECT *
+-- FROM customers
+-- LIMIT 3; -- this returns only the first 3 customers 
+
+-- SELECT *
+-- FROM customers
+-- LIMIT 300; -- if you put a number greater than the number of rows, it just prints all the results. In this case you get all 10 customers in the table 
+
+
+-- SELECT *
+-- FROM customers
+-- LIMIT 6, 3; -- print page 3 (skip the first 6 records, and prints 3 of the following records (7-9)
+/*
+-- page 1: 1-3
+-- page 2: 4-6
+-- page 3: 7-9
+*/
+/*Exercise: Get the top 3 loyal customers (customers with more points than anyone else) */
+-- SELECT *
+-- FROM customers
+-- ORDER BY points DESC
+-- LIMIT 3; 
+/* LIMIT CLAUSE ALWAYS COMES AT THE END */
+
+----------------------------------- Inner Joins (ts: 1:24)-------------------------
+/*selecing columns from multiple tables*/
+
+-- SELECT order_id, first_name, last_name
+-- FROM orders
+-- JOIN customers 
+-- 	ON  orders.customer_id = customers.customer_id;
+
+-- USE STORE;
+
+-- SELECT order_id, orders.customer_id, first_name, last_name  -- orders.customer_id is used because there is a customer_id column in both tables. so you have to specify which table you are referring to. You can choose either table, because they both refer to the same value, so it doesn't matter
+-- FROM orders
+-- JOIN customers
+-- 	ON orders.customer_id = customers.customer_id; 
+
+-- /* Using Aliases for cleaner code */
+-- SELECT order_id, o.customer_id, first_name, last_name
+-- FROM orders o -- you are now declaring the 'orders' table as 'o'
+-- JOIN customers c -- you are now declaring the 'customers' table as 'c'
+-- 	ON o.customer_id = c.customer_id; 
+
+/*EXERCISE: Join the order_items table with the products table, so for each order return the product_id and its name followed by the quantity and the unit price from the order_items table. and use aliases to simply your code */
+-- USE store;
+-- SELECT *
+-- FROM order_items o
+-- JOIN products p
+-- 	ON o.product_id = p.product_id
+-- ORDER BY o.order_id;
+
+
+-- SELECT 
+-- 	oi.order_id,
+-- 	oi.product_id, 
+--     name,
+--     quantity, 
+--     oi.unit_price -- this is the price at the time of placing the order. the u
+-- FROM order_items oi
+-- JOIN products p
+-- 	ON oi.product_id = p.product_id
+-- ORDER BY oi.order_id;
+
+----------------------------------- Joining across Databases (ts: 1:33)-------------------------
+/*join "products table" from the sql_inventory database and sql_store databases have a "products* table. They both have the same columns and the same data*/
+
+
+----------------------------------- Self Joins -------------------------------------------------
+/*Join a table with itself*/
+/*Use sql_hr database and combine the 'employees' and 'offices' tables* so that we can join each employee with their manager*/
+
+----------------------------------- Joining Multiple Tables (ts: 1:40) -------------------------------------------------
+/* */
+-- USE sql_store;
+-- SELECT 
+-- 	o.order_id, 
+--     o.order_date, 
+--     c.first_name, 
+--     c.last_name, 
+--     os.name AS status
+-- FROM orders o
+-- JOIN customers c
+-- 	ON o.customer_id = c.customer_id
+-- JOIN order_statuses os
+-- 	ON o.status = os.order_status_id;
+
+/*EXERCISE */
+
+----------------------------------- Outer Joins (ts: 1:53) ----------------------------------------------
+-- the table mentioned in FROM is the left table. and the JOIN table is the right table. 
+-- USE store;
+-- SELECT
+-- 	c.customer_id,
+--     c.first_name,
+--     o.order_id
+-- FROM customer c
+-- JOIN orders o
+-- 	ON c.customer_id = o.customer.id
+-- ORDER BY c.customer_id;
+
+
+
+/*Exercise*/
+
+-- -------------------------------The USING clause ----------------------------
+/*keyword that can be used if column names in two tables you want to join, are the same*/
+/* ex. USING (shipper_id) is the same as ON o.shipping_id = p.shipping_id */
+
+-- -------------------------------The UNION opperator ts: 2:18 ----------------------------
+SELECT *
+FROM orders;
+
+
+
+
+SELECT first_name
+FROM archived_orders
+UNION
+SELECT name
+FROM shippers
+
 
